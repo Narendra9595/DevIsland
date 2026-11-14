@@ -55,19 +55,42 @@ Hover the notch and it opens into a small, glassy island. When something is happ
 2. Open the DMG and drag **DevIsland** into **Applications**.
 3. Open DevIsland from Applications.
 
-### First launch ("Apple can't check it for malicious software")
-DevIsland isn't notarized by Apple yet, so macOS asks you to confirm the first time:
+### First launch: "DevIsland Not Opened"
 
-- **macOS 15 and later:** open DevIsland once, click **Done**, then go to **System Settings → Privacy & Security**, scroll down, and click **Open Anyway** next to DevIsland.
-- **macOS 14 and earlier:** right-click DevIsland in Applications → **Open** → **Open**.
+The first time you open DevIsland, macOS shows:
 
-<details>
-<summary>Or with one Terminal command</summary>
+> **"DevIsland" Not Opened.** Apple could not verify "DevIsland" is free of malware that may harm your Mac or compromise your privacy.
+
+This is normal for free, open-source Mac apps. It appears because DevIsland isn't **notarized** (signed with a paid Apple Developer ID and scanned by Apple) yet. It does **not** mean anything is wrong with the app. You only need to allow it **once**, and the full source code is right here for anyone to check.
+
+#### Option 1: System Settings (recommended)
+
+1. In the warning, click **Done**. Don't click *Move to Bin*.
+2. Open **System Settings** (Apple menu  → System Settings).
+3. Click **Privacy & Security** in the sidebar.
+4. Scroll down to the **Security** section. You'll see *"DevIsland" was blocked to protect your Mac.*
+5. Click **Open Anyway**, then confirm with your password or Touch ID.
+6. Open DevIsland again from Applications and click **Open** if asked one more time.
+
+From now on DevIsland opens normally, every time.
+
+> Don't see **Open Anyway**? It only appears for about an hour after you try to open the app. Open DevIsland once more, click **Done**, and check Privacy & Security again.
+
+#### Option 2: one Terminal command
+
+Open **Terminal** (Applications → Utilities → Terminal), paste this line and press Return:
 
 ```sh
 xattr -dr com.apple.quarantine /Applications/DevIsland.app
 ```
-</details>
+
+This removes the "downloaded from the internet" flag that macOS puts on the app. Then open DevIsland normally. Nothing is printed when it works.
+
+#### macOS 14 Sonoma and earlier
+
+Right-click (or Control-click) **DevIsland** in Applications → **Open** → **Open**.
+
+---
 
 After that it opens normally. DevIsland lives in the menu bar and in the notch; there's no Dock icon unless a window is open.
 
