@@ -71,6 +71,11 @@ xattr -dr com.apple.quarantine /Applications/DevIsland.app
 
 After that it opens normally. DevIsland lives in the menu bar and in the notch; there's no Dock icon unless a window is open.
 
+### Updates
+DevIsland checks for a new version once a day (Settings → General → Updates). When one is out, a dot appears on the ⚙️ in the island and Settings → About shows **Download Update**. Download the new DMG and drag DevIsland into Applications, replacing the old one. Your settings and history stay.
+
+> Using version 1.0.0? It doesn't have the update check yet, so download the latest release once by hand.
+
 ### Permissions (all optional, asked only when you use the feature)
 
 | Permission | Used for |
@@ -121,7 +126,7 @@ How the Claude Code and Codex connections work is described in [docs/INTEGRATION
 
 - **Local-first.** No account, no analytics, no telemetry. History is stored only on your Mac (`~/Library/Application Support/DevIsland`).
 - **Never reads your prompts, code or file contents.** From Claude Code it shows the step it's on, file names and the first line of its messages (you can turn messages off).
-- **Network only when you ask:** Apple Music catalog search, and Ask (sent to Claude or Codex through your own sign-in).
+- **Network only for:** Apple Music catalog search and Ask (sent to Claude or Codex through your own sign-in), when you use them, plus a daily update check with GitHub that sends nothing about you (can be turned off).
 - Clipboard history is opt-in, kept in memory and skips password-manager items. Calls are detected from which app uses the mic; audio is never read or recorded.
 
 ---

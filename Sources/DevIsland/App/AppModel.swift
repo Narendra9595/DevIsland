@@ -42,6 +42,7 @@ final class AppModel {
     let keepAwake = KeepAwake()
     let hud = HUDMonitor()
     let ask = AskService()
+    let updates = UpdateChecker()
     @ObservationIgnored private(set) lazy var mediaKeys = MediaKeyTap(hud: hud)
     @ObservationIgnored private var mediaKeysTask: Task<Void, Never>?
 
@@ -130,6 +131,9 @@ final class AppModel {
         hud.start { [weak preferences] in preferences?.showHUDs ?? false }
         applyMediaKeys(askPermission: false)
         ask.refreshProviders()
+        if Bundle.main.bundleIdentifier != nil {
+            updates.start { [weak preferences] in preferences?.checkForUpdates ?? false }
+        }
         do {
             try HookScript.install()
         } catch {

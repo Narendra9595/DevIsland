@@ -267,3 +267,15 @@ struct GitInfoTests {
         #expect(GitInfo.branch(at: folder.path) == nil)
     }
 }
+
+@MainActor
+struct UpdateCheckerTests {
+    @Test func comparesVersionsNumerically() {
+        #expect(UpdateChecker.isNewer("1.1.0", than: "1.0.0"))
+        #expect(UpdateChecker.isNewer("1.10.0", than: "1.9.2"))
+        #expect(UpdateChecker.isNewer("2.0", than: "1.9.9"))
+        #expect(!UpdateChecker.isNewer("1.0.0", than: "1.0.0"))
+        #expect(!UpdateChecker.isNewer("1.0", than: "1.0.0"))
+        #expect(!UpdateChecker.isNewer("0.9.9", than: "1.0.0"))
+    }
+}

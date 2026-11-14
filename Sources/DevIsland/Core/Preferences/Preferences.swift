@@ -50,6 +50,8 @@ final class Preferences {
     var shortcut: HotKeyShortcut { didSet { defaults.set(shortcut.rawValue, forKey: Key.shortcut) } }
     /// Highlight color for the island (hex, e.g. "#2BC7B8").
     var highlightHex: String { didSet { defaults.set(highlightHex, forKey: Key.highlight) } }
+    /// Check GitHub once a day for a newer version.
+    var checkForUpdates: Bool { didSet { defaults.set(checkForUpdates, forKey: Key.checkForUpdates) } }
     /// Hide the island while an app is full screen (it comes back when you point at the top, and for alerts).
     var hideInFullScreen: Bool { didSet { defaults.set(hideInFullScreen, forKey: Key.hideInFullScreen) } }
     /// Notch, floating island, or automatic (`IslandStyle` raw value).
@@ -85,6 +87,7 @@ final class Preferences {
         islandCorner = defaults.object(forKey: Key.islandCorner) as? Double ?? 26
         islandStyle = defaults.string(forKey: Key.islandStyle) ?? "automatic"
         hideInFullScreen = defaults.object(forKey: Key.hideInFullScreen) as? Bool ?? true
+        checkForUpdates = defaults.object(forKey: Key.checkForUpdates) as? Bool ?? true
         showHUDs = defaults.object(forKey: Key.showHUDs) as? Bool ?? true
         replaceSystemHUD = defaults.bool(forKey: Key.replaceSystemHUD)
         clipboardShortcut = defaults.object(forKey: Key.clipboardShortcut) as? Bool ?? true
@@ -108,6 +111,7 @@ final class Preferences {
         static let islandCorner = "islandCorner"
         static let islandStyle = "islandStyle"
         static let hideInFullScreen = "hideInFullScreen"
+        static let checkForUpdates = "checkForUpdates"
         static let showHUDs = "showHUDs"
         static let replaceSystemHUD = "replaceSystemHUD"
         static let clipboardShortcut = "clipboardShortcut"

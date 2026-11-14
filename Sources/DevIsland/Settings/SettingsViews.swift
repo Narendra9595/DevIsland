@@ -23,6 +23,12 @@ struct GeneralSettingsView: View {
                 }
                 Toggle("Open the clipboard with ⌃⌥V", isOn: $preferences.clipboardShortcut)
             }
+            Section("Updates") {
+                Toggle("Check for updates automatically", isOn: $preferences.checkForUpdates)
+                LabeledContent("Version \(AppInfo.version)") {
+                    Button("Check Now") { Task { await model.updates.check() } }
+                }
+            }
             Section("Help") {
                 LabeledContent("Welcome guide") {
                     Button("Show Again") { model.windows?.showOnboarding() }
@@ -33,7 +39,7 @@ struct GeneralSettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 520, height: 330)
+        .frame(width: 520, height: 420)
     }
 
     /// Only works in the bundled app (Scripts/build-app.sh), not with `swift run`.
@@ -154,7 +160,7 @@ struct PrivacySettingsView: View {
             }
             Section("Your data") {
                 Label("No account, no analytics.", systemImage: "lock.shield")
-                Label("Network only when you ask: Apple Music search, and Ask (sent to Claude or Codex through your own sign-in).", systemImage: "network")
+                Label("Network only for: Apple Music search and Ask (when you use them), and a daily update check with GitHub (can be turned off in General).", systemImage: "network")
             }
         }
         .formStyle(.grouped)
@@ -183,6 +189,8 @@ struct AboutSettingsView: View {
                 .font(.callout)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
+            UpdateStatus()
+                .padding(.top, 4)
             HStack(spacing: 10) {
                 Button("Welcome Guide") { model.windows?.showOnboarding() }
                     .buttonStyle(.secondary)
@@ -319,6 +327,43 @@ struct AISettingsView: View {
         case .signedOut: "Installed, not signed in."
         case .notInstalled: "Not installed on this Mac."
         case .unknown: "Checking…"
+        }
+    }
+}
+
+/// "Up to date" or "Update available" with a Download button, for Settings → About.
+private struct UpdateStatus: View {
+    @Environment(AppModel.self) private var model
+
+    var body: some View {
+        let updates = model.updates
+        Group {
+            switch updates.state {
+            case .available(let release):
+                VStack(spacing: 8) {
+                    Label("DevIsland \(release.version) is available", systemImage: "arrow.down.circle.fill")
+                        .foregroundStyle(Theme.accent)
+                        .font(.callout.weight(.semibold))
+                    Button("Download Update") { NSWorkspace.shared.open(release.page) }
+                        .buttonStyle(.primary)
+                    Text("Download the DMG and drag DevIsland into Applications, replacing the old one.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            case .checking:
+                ProgressView().controlSize(.small)
+            case .upToDate:
+                Label("You're up to date", systemImage: "checkmark.circle.fill")
+                    .font(.callout)
+                    .foregroundStyle(Theme.success)
+            case .failed:
+                Button("Couldn't check for updates. Try again") { Task { await updates.check() } }
+                    .buttonStyle(.link)
+                    .font(.callout)
+            case .idle:
+                Button("Check for Updates") { Task { await updates.check() } }
+                    .buttonStyle(.secondary)
+            }
         }
     }
 }

@@ -117,7 +117,15 @@ struct IslandHeader: View {
                     Text(context.date, format: .dateTime.hour().minute())
                 }
                 PageTab(selected: false, help: "Dashboard", symbol: "macwindow") { model.app.windows?.showDashboard(nil) }
-                PageTab(selected: false, help: "Settings", symbol: "gearshape.fill") { model.app.windows?.showSettings() }
+                PageTab(selected: false, help: model.app.updates.available == nil ? "Settings" : "Update available",
+                        symbol: "gearshape.fill") {
+                    model.app.windows?.showSettings(tab: model.app.updates.available == nil ? nil : "About")
+                }
+                .overlay(alignment: .topTrailing) {
+                    if model.app.updates.available != nil {
+                        Circle().fill(Theme.accent).frame(width: 7, height: 7).offset(x: 1, y: -1)
+                    }
+                }
             }
         }
     }
