@@ -6,7 +6,7 @@ struct OnboardingView: View {
     @State private var step: Int
     @State private var forward = true
     let onFinish: () -> Void
-    private let lastStep = 3
+    private let lastStep = 4
 
     init(step: Int = 0, onFinish: @escaping () -> Void) {
         _step = State(initialValue: step)
@@ -20,6 +20,7 @@ struct OnboardingView: View {
                 case 0: WelcomePage().transition(pageTransition)
                 case 1: FeaturesPage().transition(pageTransition)
                 case 2: ConnectPage().transition(pageTransition)
+                case 3: HUDPage().transition(pageTransition)
                 default: ReadyPage(shortcut: model.preferences.shortcut).transition(pageTransition)
                 }
             }
@@ -192,6 +193,70 @@ private struct ConnectPage: View {
     }
 }
 
+/// Volume and brightness: macOS shows its own popup too until you let DevIsland handle those keys.
+private struct HUDPage: View {
+    @Environment(AppModel.self) private var model
+    @State private var running = false
+
+    var body: some View {
+        let preferences = model.preferences
+        let replacing = preferences.replaceSystemHUD
+        VStack(spacing: 22) {
+            HStack(spacing: 14) {
+                Image(systemName: "speaker.wave.2.fill")
+                Image(systemName: "sun.max.fill")
+            }
+            .font(.system(size: 34, weight: .semibold))
+            .foregroundStyle(Theme.accent)
+            .frame(height: 76)
+            PageTitle(title: "Volume and brightness",
+                      subtitle: "DevIsland shows a slim bar at the notch when you change them. Until you turn on the switch below, macOS keeps showing its own popup too, so you'll see two.")
+            VStack(spacing: 10) {
+                Group {
+                    if replacing && running {
+                        Label("Done: only DevIsland's bar will show", systemImage: "checkmark.circle.fill")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(Theme.success)
+                    } else if replacing {
+                        Label("Allow DevIsland in System Settings → Privacy & Security → Accessibility", systemImage: "hand.raised.fill")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(Theme.attention)
+                    } else {
+                        Button {
+                            preferences.showHUDs = true
+                            preferences.replaceSystemHUD = true
+                            model.applyMediaKeys(askPermission: true)
+                        } label: {
+                            Label("Show only DevIsland's bar", systemImage: "rectangle.on.rectangle.slash")
+                        }
+                        .buttonStyle(.primary)
+                    }
+                }
+                .frame(height: 32)
+                Text("Needs Accessibility permission. Only the volume, mute and brightness keys are handled; everything else stays with macOS.")
+                    .font(.system(size: 12))
+                    .foregroundStyle(.white.opacity(0.6))
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: 420)
+            }
+            .padding(.horizontal, 26)
+            .padding(.vertical, 14)
+            .glass(in: RoundedRectangle(cornerRadius: 20, style: .continuous), fallback: .white.opacity(0.06))
+            Text("Change it anytime: Settings → Island → \"Hide macOS's volume and brightness popup\". You can skip this step.")
+                .font(.caption)
+                .foregroundStyle(.white.opacity(0.45))
+        }
+        .padding(.top, 36)
+        .task {
+            // Accessibility is granted in System Settings; notice it while this page is open.
+            while !Task.isCancelled {
+                running = model.mediaKeys.isRunning
+                try? await Task.sleep(for: .seconds(1))
+            }
+        }
+    }
+}
+
 private struct ReadyPage: View {
     let shortcut: HotKeyShortcut
 
@@ -206,12 +271,12 @@ private struct ReadyPage: View {
             }
             PageTitle(title: "You're all set", subtitle: "A few things to know:")
             VStack(alignment: .leading, spacing: 14) {
-                TipRow(symbol: "cursorarrow.motionlines", text: "Hover over your notch to open the island.")
-                TipRow(symbol: "hand.tap.fill", text: "Click the island to keep it open.")
+                TipRow(symbol: "cursorarrow.motionlines", text: "Hover over your notch to open the island; move away to close it.")
+                TipRow(symbol: "hand.draw.fill", text: "Swipe with two fingers: down to open, up to close, left/right for pages.")
                 if shortcut != .off {
-                    TipRow(symbol: "keyboard", text: "Press \(shortcut.title) anywhere to toggle it.")
+                    TipRow(symbol: "keyboard", text: "Press \(shortcut.title) to keep it open, ⌃⌥V for your clipboard.")
                 }
-                TipRow(symbol: "menubar.rectangle", text: "DevIsland lives in your menu bar.")
+                TipRow(symbol: "sparkles.rectangle.stack", text: "Dashboard → Features shows everything DevIsland can do.")
             }
             .padding(20)
             .frame(maxWidth: 440, alignment: .leading)

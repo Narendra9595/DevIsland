@@ -114,7 +114,8 @@ DevIsland checks for a new version once a day (Settings → General → Updates)
 
 1. **Connect Claude Code:** Dashboard → Agents → **Connect**. DevIsland adds a few small hooks to `~/.claude/settings.json` (with a backup first). New Claude Code sessions then show up in your notch.
 2. **Explore:** Dashboard → **Features** lists everything DevIsland can do, with how to use it and a button to try it.
-3. **Make it yours:** Settings → **Customize** for the highlight color, corner roundness and island style.
+3. **Volume and brightness (two popups?):** DevIsland shows its own bar at the notch, and macOS keeps showing its popup too until you turn on **Settings → Island → "Hide macOS's volume and brightness popup"** (asks for Accessibility). Then only DevIsland's bar shows. The welcome guide has a button for this.
+4. **Make it yours:** Settings → **Customize** for the highlight color, corner roundness and island style.
 
 ### Shortcuts and gestures
 
