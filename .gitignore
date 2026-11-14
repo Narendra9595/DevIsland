@@ -1,0 +1,13 @@
+# Build output
+.build/
+.swiftpm/
+DerivedData/
+build/
+
+# macOS
+.DS_Store
+
+# Internal planning notes (kept locally, not published)
+docs/ROADMAP.md
+docs/FEATURES.md
+*.pdf
